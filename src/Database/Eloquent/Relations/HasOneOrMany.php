@@ -180,7 +180,7 @@ trait HasOneOrMany
      */
     public function create(array $attributes = [])
     {
-        return tap($this->related->newInstance($attributes), function ($instance) {
+        return tap($this->related->newInstance(), function ($instance) use ($attributes) {
             $foreignKey = $this->getForeignKeyName();
             $parentKeyValue = $this->getParentKey();
 
@@ -190,6 +190,14 @@ trait HasOneOrMany
                 }
             } else {
                 $instance->setAttribute($foreignKey, $parentKeyValue);
+            }
+            
+            if(isset($attributes))
+            {
+                foreach($attributes as $key => $value)
+                {
+                    $instance->setAttribute($key, $value);
+                }
             }
 
             $instance->save();
